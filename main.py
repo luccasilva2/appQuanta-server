@@ -1,0 +1,49 @@
+from fastapi import FastAPI, Request, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from routes.auth import router as auth_router
+from routes.apps import router as apps_router
+import os
+
+app = FastAPI(
+    title="AppQuanta API",
+    description="Backend API for AppQuanta application management",
+    version="1.0.0"
+)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify your Flutter app's domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include routers
+app.include_router(auth_router, prefix="/api/v1", tags=["Authentication"])
+app.include_router(apps_router, prefix="/api/v1", tags=["Apps"])
+
+# Global error handler
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    return JSONResponse(
+        status_code=500,
+        content={
+            "success": False,
+            "message": "An unexpected error occurred.",
+            "data": None
+        }
+    )
+
+@app.get("/")
+async def root():
+    return {
+        "success": True,
+        "message": "AppQuanta API is running.",
+        "data": None
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
