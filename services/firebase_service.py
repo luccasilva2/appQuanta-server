@@ -8,16 +8,25 @@ from models.user import UserResponse
 from models.app import AppResponse, AppCreateRequest, AppUpdateRequest
 
 # Initialize Firebase Admin SDK
-cred = credentials.Certificate({
-    "type": "service_account",
-    "project_id": os.getenv("FIREBASE_PROJECT_ID"),
-    "private_key": os.getenv("FIREBASE_PRIVATE_KEY").replace('\\n', '\n'),
-    "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
-    "token_uri": "https://oauth2.googleapis.com/token",
-})
+firebase_project_id = os.getenv("FIREBASE_PROJECT_ID")
+firebase_private_key = os.getenv("FIREBASE_PRIVATE_KEY")
+firebase_client_email = os.getenv("FIREBASE_CLIENT_EMAIL")
 
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+if not firebase_project_id or not firebase_private_key or not firebase_client_email:
+    print("Warning: Firebase environment variables are not set. Skipping Firebase initialization for testing.")
+    firebase_admin.initialize_app()
+    db = None
+else:
+    cred = credentials.Certificate({
+        "type": "service_account",
+        "project_id": firebase_project_id,
+        "private_key": firebase_private_key.replace('\\n', '\n'),
+        "client_email": firebase_client_email,
+        "token_uri": "https://oauth2.googleapis.com/token",
+    })
+
+    firebase_admin.initialize_app(cred)
+    db = firestore.client()
 
 JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = "HS256"

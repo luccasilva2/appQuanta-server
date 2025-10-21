@@ -23,7 +23,7 @@ async def register_user(user: UserRegisterRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Registration failed: {str(e)}")
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login", response_model=dict)
 async def login_user(user: UserLoginRequest):
     try:
         db_user = FirebaseService.verify_user(user.email, user.password)
@@ -31,10 +31,15 @@ async def login_user(user: UserLoginRequest):
             raise HTTPException(status_code=401, detail="Invalid credentials")
 
         access_token = FirebaseService.create_access_token(data={"sub": db_user.uid})
-        return TokenResponse(
-            access_token=access_token,
-            user=db_user
-        )
+        return {
+            "success": True,
+            "message": "Login successful.",
+            "data": {
+                "access_token": access_token,
+                "token_type": "bearer",
+                "user": db_user.dict()
+            }
+        }
     except HTTPException:
         raise
     except Exception as e:
