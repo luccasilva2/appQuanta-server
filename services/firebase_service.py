@@ -14,19 +14,27 @@ firebase_client_email = os.getenv("FIREBASE_CLIENT_EMAIL")
 
 if not firebase_project_id or not firebase_private_key or not firebase_client_email:
     print("Warning: Firebase environment variables are not set. Skipping Firebase initialization for testing.")
-    firebase_admin.initialize_app()
+    try:
+        firebase_admin.initialize_app()
+    except ValueError:
+        # App already initialized
+        pass
     db = None
 else:
-    cred = credentials.Certificate({
-        "type": "service_account",
-        "project_id": firebase_project_id,
-        "private_key": firebase_private_key.replace('\\n', '\n'),
-        "client_email": firebase_client_email,
-        "token_uri": "https://oauth2.googleapis.com/token",
-    })
+    try:
+        cred = credentials.Certificate({
+            "type": "service_account",
+            "project_id": firebase_project_id,
+            "private_key": firebase_private_key.replace('\\n', '\n'),
+            "client_email": firebase_client_email,
+            "token_uri": "https://oauth2.googleapis.com/token",
+        })
 
-    firebase_admin.initialize_app(cred)
-    db = firestore.client()
+        firebase_admin.initialize_app(cred)
+        db = firestore.client()
+    except ValueError:
+        # App already initialized
+        db = firestore.client()
 
 JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = "HS256"
@@ -82,12 +90,16 @@ class FirebaseService:
 
     @staticmethod
     def get_user_apps(user_id: str) -> list[AppResponse]:
+        if db is None:
+            return []  # Return empty list if Firebase not initialized
         apps_ref = db.collection('apps').where('user_id', '==', user_id)
         apps = apps_ref.stream()
         return [FirebaseService._doc_to_app(doc) for doc in apps]
 
     @staticmethod
     def create_app(user_id: str, app_data: AppCreateRequest) -> AppResponse:
+        if db is None:
+            raise Exception("Firebase not initialized")
         now = datetime.utcnow()
         app_ref = db.collection('apps').document()
         app_dict = {
@@ -104,6 +116,8 @@ class FirebaseService:
 
     @staticmethod
     def update_app(app_id: str, user_id: str, app_data: AppUpdateRequest) -> Optional[AppResponse]:
+        if db is None:
+            raise Exception("Firebase not initialized")
         app_ref = db.collection('apps').document(app_id)
         doc = app_ref.get()
         if not doc.exists or doc.to_dict()['user_id'] != user_id:
@@ -118,6 +132,8 @@ class FirebaseService:
 
     @staticmethod
     def delete_app(app_id: str, user_id: str) -> bool:
+        if db is None:
+            raise Exception("Firebase not initialized")
         app_ref = db.collection('apps').document(app_id)
         doc = app_ref.get()
         if not doc.exists or doc.to_dict()['user_id'] != user_id:

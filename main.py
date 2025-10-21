@@ -6,7 +6,12 @@ from routes.apps import router as apps_router
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load .env file only if it exists and is readable
+try:
+    if os.path.exists('.env'):
+        load_dotenv()
+except Exception as e:
+    print(f"Warning: Could not load .env file: {e}")
 
 app = FastAPI(
     title="AppQuanta API",
