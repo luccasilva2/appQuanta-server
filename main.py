@@ -1,8 +1,9 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from routes.auth import router as auth_router
 from routes.apps import router as apps_router
+from middleware.auth_middleware import AuthMiddleware
 import os
 from dotenv import load_dotenv
 
@@ -15,9 +16,12 @@ except Exception as e:
 
 app = FastAPI(
     title="AppQuanta API",
-    description="Backend API for AppQuanta application management",
+    description="Backend API for AppQuanta application management with Supabase",
     version="1.0.0"
 )
+
+# Add authentication middleware
+app.add_middleware(AuthMiddleware)
 
 # CORS middleware
 app.add_middleware(
@@ -48,7 +52,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 async def root():
     return {
         "success": True,
-        "message": "AppQuanta API is running.",
+        "message": "AppQuanta API with Supabase is running.",
         "data": None
     }
 
