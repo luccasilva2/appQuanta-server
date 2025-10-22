@@ -6,25 +6,29 @@ from models.app import AppResponse, AppCreateRequest, AppUpdateRequest
 
 # Initialize Supabase client
 supabase_url = os.getenv("SUPABASE_URL")
-supabase_service_key = os.getenv("SUPABASE_SERVICE_KEY")
+supabase_anon_key = os.getenv("SUPABASE_ANON_KEY")
+supabase_service_role_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
-if not supabase_url or not supabase_service_key:
+if not supabase_url or not supabase_anon_key or not supabase_service_role_key:
     print("Warning: Supabase environment variables are not set. Skipping Supabase initialization for testing.")
     supabase: Optional[Client] = None
+    supabase_auth: Optional[Client] = None
 else:
     try:
-        supabase = create_client(supabase_url, supabase_service_key)
+        supabase = create_client(supabase_url, supabase_service_role_key)  # For DB operations
+        supabase_auth = create_client(supabase_url, supabase_anon_key)  # For auth verification
     except Exception as e:
         print(f"Failed to initialize Supabase client: {e}")
         supabase = None
+        supabase_auth = None
 
 class SupabaseService:
     @staticmethod
     def verify_token(token: str) -> Optional[str]:
-        if not supabase:
+        if not supabase_auth:
             return None
         try:
-            response = supabase.auth.get_user(token)
+            response = supabase_auth.auth.get_user(token)
             return response.user.id if response.user else None
         except Exception as e:
             print(f"Token verification failed: {e}")
