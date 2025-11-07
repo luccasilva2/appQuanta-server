@@ -15,13 +15,16 @@ def get_current_user(request: Request) -> str:
 async def get_user_apps(request: Request):
     user_id = get_current_user(request)
     try:
+        print(f"Getting apps for user {user_id}")
         apps = SupabaseService.get_user_apps(user_id)
+        print(f"Retrieved {len(apps)} apps")
         return {
             "success": True,
             "message": "Apps retrieved successfully.",
             "data": [app.dict() for app in apps]
         }
     except Exception as e:
+        print(f"Error getting apps: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to retrieve apps: {str(e)}")
 
 @router.get("/apps/{app_id}", response_model=dict)
@@ -45,13 +48,16 @@ async def get_app(app_id: str, request: Request):
 async def create_app(app_data: AppCreateRequest, request: Request):
     user_id = get_current_user(request)
     try:
+        print(f"Creating app for user {user_id}: {app_data.dict()}")
         new_app = SupabaseService.create_app(user_id, app_data)
+        print(f"App created successfully: {new_app.dict()}")
         return {
             "success": True,
             "message": "App created successfully.",
             "data": new_app.dict()
         }
     except Exception as e:
+        print(f"Error creating app: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Failed to create app: {str(e)}")
 
 @router.put("/apps/{app_id}", response_model=dict)

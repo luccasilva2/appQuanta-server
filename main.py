@@ -39,11 +39,15 @@ app.include_router(apps_router, prefix="/api/v1", tags=["Apps"])
 # Global error handler
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
+    import traceback
+    error_details = traceback.format_exc()
+    print(f"Global exception handler: {exc}")
+    print(f"Traceback: {error_details}")
     return JSONResponse(
         status_code=500,
         content={
             "success": False,
-            "message": "An unexpected error occurred.",
+            "message": f"An unexpected error occurred: {str(exc)}",
             "data": None
         }
     )

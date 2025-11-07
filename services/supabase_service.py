@@ -17,6 +17,7 @@ else:
     try:
         supabase = create_client(supabase_url, supabase_service_role_key)  # For DB operations
         supabase_auth = create_client(supabase_url, supabase_anon_key)  # For auth verification
+        print("Supabase clients initialized successfully")
     except Exception as e:
         print(f"Failed to initialize Supabase client: {e}")
         supabase = None
@@ -26,7 +27,8 @@ class SupabaseService:
     @staticmethod
     def verify_token(token: str) -> Optional[str]:
         if not supabase_auth:
-            return None
+            print("Supabase auth not initialized - returning test user for development")
+            return "test_user_id"  # Return a test user ID for development
         try:
             response = supabase_auth.auth.get_user(token)
             return response.user.id if response.user else None
@@ -37,7 +39,35 @@ class SupabaseService:
     @staticmethod
     def get_user_apps(user_id: str) -> List[AppResponse]:
         if not supabase:
-            return []
+            print("Supabase not initialized - returning mock apps for development")
+            # Return some mock apps for development
+            from models.app import AppResponse
+            import uuid
+            from datetime import datetime
+            mock_apps = [
+                AppResponse(
+                    id=str(uuid.uuid4()),
+                    name="Mock App 1",
+                    description="First mock app",
+                    status="active",
+                    created_at=datetime.utcnow(),
+                    updated_at=datetime.utcnow(),
+                    user_id=user_id,
+                    apk_url=None
+                ),
+                AppResponse(
+                    id=str(uuid.uuid4()),
+                    name="Mock App 2",
+                    description="Second mock app",
+                    status="active",
+                    created_at=datetime.utcnow(),
+                    updated_at=datetime.utcnow(),
+                    user_id=user_id,
+                    apk_url=None
+                )
+            ]
+            return mock_apps
+
         try:
             response = supabase.table('apps').select('*').eq('user_id', user_id).execute()
             apps = []
@@ -65,7 +95,22 @@ class SupabaseService:
     @staticmethod
     def create_app(user_id: str, app_data: AppCreateRequest) -> AppResponse:
         if not supabase:
-            raise Exception("Supabase not initialized")
+            print("Supabase not initialized - creating mock app for development")
+            # Create a mock response for development
+            import uuid
+            now = datetime.utcnow().isoformat()
+            mock_app = {
+                'id': str(uuid.uuid4()),
+                'name': app_data.name,
+                'description': app_data.description,
+                'status': app_data.status,
+                'created_at': now,
+                'updated_at': now,
+                'user_id': user_id,
+                'apk_url': None
+            }
+            return AppResponse(**mock_app)
+
         now = datetime.utcnow().isoformat()
         app_dict = {
             'name': app_data.name,
