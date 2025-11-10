@@ -134,7 +134,22 @@ class SupabaseService:
     @staticmethod
     def update_app(app_id: str, user_id: str, app_data: AppUpdateRequest) -> Optional[AppResponse]:
         if not supabase:
-            raise Exception("Supabase not initialized")
+            print("Supabase not initialized - updating mock app for development")
+            # For development, just return a mock updated app
+            import uuid
+            now = datetime.utcnow().isoformat()
+            mock_app = {
+                'id': app_id,
+                'name': app_data.name or "Mock App",
+                'description': app_data.description or "Mock description",
+                'status': app_data.status or "active",
+                'created_at': now,
+                'updated_at': now,
+                'user_id': user_id,
+                'apk_url': None
+            }
+            return AppResponse(**mock_app)
+
         try:
             # First check if app exists and belongs to user
             existing = SupabaseService.get_app(app_id, user_id)
@@ -179,7 +194,10 @@ class SupabaseService:
     @staticmethod
     def delete_app(app_id: str, user_id: str) -> bool:
         if not supabase:
-            raise Exception("Supabase not initialized")
+            print("Supabase not initialized - deleting mock app for development")
+            # For development, just return success
+            return True
+
         try:
             # First check if app exists and belongs to user
             existing = SupabaseService.get_app(app_id, user_id)
