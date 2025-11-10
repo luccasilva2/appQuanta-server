@@ -1,123 +1,123 @@
-# AppQuanta FastAPI Backend
+# Backend FastAPI do AppQuanta
 
-A modern, efficient backend API for the AppQuanta application, built with FastAPI and integrated with Firebase Authentication and Firestore.
+Uma API backend moderna e eficiente para a aplicação AppQuanta, construída com FastAPI e integrada com Autenticação Firebase e Firestore.
 
-## Features
+## Funcionalidades
 
-- **User Authentication**: Register and login users with Firebase Auth
-- **JWT Token Management**: Secure API endpoints with JWT authentication
-- **App Management**: CRUD operations for user applications stored in Firestore
-- **Automatic Documentation**: Swagger UI available at `/docs`
-- **CORS Support**: Configured for Flutter app integration
-- **Error Handling**: Standardized error responses
-- **24/7 Deployment**: Ready for Render deployment
+- **Autenticação de Usuário**: Registrar e fazer login de usuários com Firebase Auth
+- **Gerenciamento de Tokens JWT**: Proteger endpoints da API com autenticação JWT
+- **Gerenciamento de Apps**: Operações CRUD para aplicações de usuários armazenadas no Firestore
+- **Documentação Automática**: Interface Swagger UI disponível em `/docs`
+- **Suporte a CORS**: Configurado para integração com app Flutter
+- **Tratamento de Erros**: Respostas de erro padronizadas
+- **Implantação 24/7**: Pronto para implantação no Render
 
-## Tech Stack
+## Pilha Tecnológica
 
 - **Framework**: FastAPI
-- **Authentication**: Firebase Auth + JWT
-- **Database**: Firebase Firestore
-- **Deployment**: Render
-- **Language**: Python 3.11+
+- **Autenticação**: Firebase Auth + JWT
+- **Banco de Dados**: Firebase Firestore
+- **Implantação**: Render
+- **Linguagem**: Python 3.11+
 
-## Project Structure
+## Estrutura do Projeto
 
 ```
 appQuanta-server/
-├── main.py                 # FastAPI application entry point
+├── main.py                 # Ponto de entrada da aplicação FastAPI
 ├── models/
-│   ├── user.py            # User-related Pydantic models
-│   └── app.py             # App-related Pydantic models
+│   ├── user.py            # Modelos Pydantic relacionados ao usuário
+│   └── app.py             # Modelos Pydantic relacionados ao app
 ├── routes/
-│   ├── auth.py            # Authentication endpoints
-│   └── apps.py            # App management endpoints
+│   ├── auth.py            # Endpoints de autenticação
+│   └── apps.py            # Endpoints de gerenciamento de apps
 ├── services/
-│   └── firebase_service.py # Firebase integration
-├── requirements.txt        # Python dependencies
-├── Procfile               # Render deployment configuration
-├── .env.example           # Environment variables template
-└── README.md              # This file
+│   └── firebase_service.py # Integração com Firebase
+├── requirements.txt        # Dependências Python
+├── Procfile               # Configuração de implantação no Render
+├── .env.example           # Modelo de variáveis de ambiente
+└── README.md              # Este arquivo
 ```
 
-## API Endpoints
+## Endpoints da API
 
-### Authentication
-- `POST /api/v1/auth/register` - Register new user
-- `POST /api/v1/auth/login` - Login user and get JWT token
+### Autenticação
+- `POST /api/v1/auth/register` - Registrar novo usuário
+- `POST /api/v1/auth/login` - Fazer login do usuário e obter token JWT
 
-### Apps Management (Protected)
-- `GET /api/v1/apps` - Get user's apps
-- `POST /api/v1/apps/create` - Create new app
-- `PUT /api/v1/apps/{app_id}` - Update app
-- `DELETE /api/v1/apps/{app_id}` - Delete app
+### Gerenciamento de Apps (Protegido)
+- `GET /api/v1/apps` - Obter apps do usuário
+- `POST /api/v1/apps/create` - Criar novo app
+- `PUT /api/v1/apps/{app_id}` - Atualizar app
+- `DELETE /api/v1/apps/{app_id}` - Deletar app
 
-## Response Format
+## Formato de Resposta
 
-All API responses follow this standardized format:
+Todas as respostas da API seguem este formato padronizado:
 
 ```json
 {
   "success": true,
-  "message": "Operation completed successfully.",
+  "message": "Operação concluída com sucesso.",
   "data": { ... }
 }
 ```
 
-## Setup and Installation
+## Configuração e Instalação
 
-1. **Clone the repository**
+1. **Clone o repositório**
    ```bash
    git clone <repository-url>
    cd appQuanta-server
    ```
 
-2. **Create virtual environment**
+2. **Crie um ambiente virtual**
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   source venv/bin/activate  # No Windows: venv\Scripts\activate
    ```
 
-3. **Install dependencies**
+3. **Instale as dependências**
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Set up environment variables**
-   - Copy `.env.example` to `.env`
-   - Fill in your Firebase project credentials
-   - Generate a secure JWT secret
+4. **Configure as variáveis de ambiente**
+   - Copie `.env.example` para `.env`
+   - Preencha suas credenciais do projeto Firebase
+   - Gere um segredo JWT seguro
    - [Arquivo de Chaves](https://docs.google.com/document/d/1DYIuvFTs5DRbp6LwzNFXGFMxxTC7comACQTXzwO7NfA/edit?usp=sharing)
 
-5. **Run the server**
+5. **Execute o servidor**
    ```bash
    python main.py
    ```
 
-   The server will start at `http://localhost:8000`
+   O servidor iniciará em `http://localhost:8000`
 
-## Firebase Setup
+## Configuração do Firebase
 
-1. Create a Firebase project at https://console.firebase.google.com/
-2. Enable Authentication and Firestore
-3. Generate a service account key (JSON file)
-4. Set the following environment variables:
+1. Crie um projeto Firebase em https://console.firebase.google.com/
+2. Habilite Autenticação e Firestore
+3. Gere uma chave de conta de serviço (arquivo JSON)
+4. Defina as seguintes variáveis de ambiente:
    - `FIREBASE_PROJECT_ID`
-   - `FIREBASE_PRIVATE_KEY` (format with \n for line breaks)
+   - `FIREBASE_PRIVATE_KEY` (formate com \n para quebras de linha)
    - `FIREBASE_CLIENT_EMAIL`
    - `JWT_SECRET`
 
-## Flutter Integration
+## Integração com Flutter
 
-### Authentication
+### Autenticação
 ```dart
-// Register
+// Registrar
 final response = await http.post(
   Uri.parse('https://your-render-app.com/api/v1/auth/register'),
   headers: {'Content-Type': 'application/json'},
   body: jsonEncode({
     'email': 'user@example.com',
     'password': 'password123',
-    'display_name': 'User Name'
+    'display_name': 'Nome do Usuário'
   }),
 );
 
@@ -131,13 +131,13 @@ final response = await http.post(
   }),
 );
 
-// Extract token from response
+// Extrair token da resposta
 final token = jsonDecode(response.body)['data']['access_token'];
 ```
 
-### App Management
+### Gerenciamento de Apps
 ```dart
-// Get apps
+// Obter apps
 final response = await http.get(
   Uri.parse('https://your-render-app.com/api/v1/apps'),
   headers: {
@@ -146,7 +146,7 @@ final response = await http.get(
   },
 );
 
-// Create app
+// Criar app
 final response = await http.post(
   Uri.parse('https://your-render-app.com/api/v1/apps/create'),
   headers: {
@@ -154,41 +154,41 @@ final response = await http.post(
     'Content-Type': 'application/json'
   },
   body: jsonEncode({
-    'name': 'My App',
-    'description': 'App description',
+    'name': 'Meu App',
+    'description': 'Descrição do app',
     'status': 'active'
   }),
 );
 ```
 
-## Deployment to Render
+## Implantação no Render
 
-1. **Connect your GitHub repository to Render**
-2. **Create a new Web Service**
-3. **Configure build settings**:
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-4. **Set environment variables** in Render dashboard:
+1. **Conecte seu repositório GitHub ao Render**
+2. **Crie um novo Web Service**
+3. **Configure as definições de build**:
+   - **Comando de Build**: `pip install -r requirements.txt`
+   - **Comando de Início**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+4. **Defina as variáveis de ambiente** no painel do Render:
    - `FIREBASE_PROJECT_ID`
    - `FIREBASE_PRIVATE_KEY`
    - `FIREBASE_CLIENT_EMAIL`
    - `JWT_SECRET`
-   - `PORT` (automatically set by Render)
+   - `PORT` (definido automaticamente pelo Render)
 
-## Development
+## Desenvolvimento
 
-- **API Documentation**: Visit `http://localhost:8000/docs` for Swagger UI
-- **Testing**: Use Postman or similar tools to test endpoints
-- **Linting**: Run `flake8` for code quality checks
+- **Documentação da API**: Visite `http://localhost:8000/docs` para a interface Swagger UI
+- **Testes**: Use Postman ou ferramentas similares para testar endpoints
+- **Linting**: Execute `flake8` para verificações de qualidade de código
 
-## Contributing
+## Contribuição
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+1. Faça um fork do repositório
+2. Crie uma branch de funcionalidade
+3. Faça suas alterações
+4. Teste exaustivamente
+5. Envie um pull request
 
-## License
+## Licença
 
-This project is licensed under the MIT License.
+Este projeto está licenciado sob a Licença MIT.
