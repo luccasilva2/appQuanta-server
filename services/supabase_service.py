@@ -30,7 +30,7 @@ class SupabaseService:
             print("Supabase auth not initialized - returning test user for development")
             return "test_user_id"  # Return a test user ID for development
         try:
-            response = supabase_auth.auth.get_user(token)
+            response = supabase_auth.auth.get_user(jwt=token)
             return response.user.id if response.user else None
         except Exception as e:
             print(f"Token verification failed: {e}")

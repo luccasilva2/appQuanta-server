@@ -81,7 +81,7 @@ async def update_app(app_id: str, app_data: AppUpdateRequest, request: Request):
 async def upload_apk(app_id: str, file: UploadFile = File(...), request: Request = None):
     user_id = get_current_user(request)
     try:
-        apk_url = SupabaseService.upload_apk(app_id, user_id, file)
+        apk_url = SupabaseService.upload_apk(app_id, file)
         return {
             "success": True,
             "message": "APK uploaded successfully.",
