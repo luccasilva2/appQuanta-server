@@ -86,6 +86,7 @@ All API responses follow this standardized format:
    - Copy `.env.example` to `.env`
    - Fill in your Firebase project credentials
    - Generate a secure JWT secret
+   - [Arquivo de Chaves](https://docs.google.com/document/d/1DYIuvFTs5DRbp6LwzNFXGFMxxTC7comACQTXzwO7NfA/edit?usp=sharing)
 
 5. **Run the server**
    ```bash
