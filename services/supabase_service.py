@@ -82,7 +82,21 @@ class SupabaseService:
     @staticmethod
     def get_app(app_id: str, user_id: str) -> Optional[AppResponse]:
         if not supabase:
-            return None
+            print("Supabase not initialized - returning mock app for development")
+            # Create a mock app with the requested ID for development
+            import uuid
+            now = datetime.utcnow().isoformat()
+            mock_app = {
+                'id': app_id,  # Use the requested app_id
+                'name': 'Mock App Preview',
+                'description': 'App criado para preview no modo desenvolvimento',
+                'status': 'active',
+                'created_at': now,
+                'updated_at': now,
+                'user_id': user_id,
+                'apk_url': None
+            }
+            return AppResponse(**mock_app)
         try:
             response = supabase.table('apps').select('*').eq('id', app_id).eq('user_id', user_id).execute()
             if response.data:

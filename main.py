@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from routes.auth import router as auth_router
 from routes.apps import router as apps_router
+from routes.preview import router as preview_router
 from middleware.auth_middleware import AuthMiddleware
 import os
 from dotenv import load_dotenv
@@ -35,6 +36,7 @@ app.add_middleware(
 # Include routers
 app.include_router(auth_router, prefix="/api/v1", tags=["Authentication"])
 app.include_router(apps_router, prefix="/api/v1", tags=["Apps"])
+app.include_router(preview_router, prefix="/api/v1", tags=["Preview"])
 
 # Global error handler
 @app.exception_handler(Exception)
