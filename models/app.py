@@ -6,6 +6,10 @@ class AppCreateRequest(BaseModel):
     name: str
     description: Optional[str] = None
     status: str = "active"  # active, inactive, etc.
+    icon: Optional[str] = None
+    color: Optional[str] = None
+    screens: Optional[list] = None
+    type: Optional[str] = None
 
 class AppUpdateRequest(BaseModel):
     name: Optional[str] = None
@@ -17,6 +21,10 @@ class AppResponse(BaseModel):
     name: str
     description: Optional[str] = None
     status: str
+    icon: Optional[str] = None
+    color: Optional[str] = None
+    screens: Optional[list] = None
+    type: Optional[str] = None
     created_at: datetime
     updated_at: datetime
     user_id: str

@@ -16,9 +16,9 @@ def get_current_user(request: Request) -> str:
 def _get_app_template(app_data: Dict[str, Any]) -> str:
     """Generate HTML template based on app type and screens"""
     app_name = app_data.get('name', 'Meu App')
-    color = app_data.get('color', '#4E9FFF')
-    screens = app_data.get('screens', ['Home'])
-    app_type = app_data.get('type', 'app')
+    color = app_data.get('color', '#4E9FFF') or '#4E9FFF'
+    screens = app_data.get('screens', ['Home']) or ['Home']
+    app_type = app_data.get('type', 'app') or 'app'
 
     # Template mapping based on app type
     templates = {
@@ -724,15 +724,10 @@ async def get_app_preview(app_id: str, request: Request):
         # Convert app to dict and add additional preview data
         app_dict = app.dict()
 
-        # Add default preview data if not present
-        if 'color' not in app_dict or not app_dict['color']:
-            app_dict['color'] = '#4E9FFF'
-
-        if 'screens' not in app_dict or not app_dict['screens']:
-            app_dict['screens'] = ['Home', 'About', 'Contact']
-
-        if 'type' not in app_dict or not app_dict['type']:
-            app_dict['type'] = 'app'
+        # Use stored data with fallbacks
+        app_dict['color'] = app_dict.get('color') or '#4E9FFF'
+        app_dict['screens'] = app_dict.get('screens') or ['Home', 'About', 'Contact']
+        app_dict['type'] = app_dict.get('type') or 'app'
 
         # Generate HTML preview
         html_content = _get_app_template(app_dict)
